@@ -1,0 +1,2023 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matriz de Tipificaciones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.5;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 100%;
+            overflow: hidden;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px 15px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            padding: 0 10px;
+        }
+        
+        .header p {
+            font-size: 1rem;
+            opacity: 0.95;
+            padding: 0 10px;
+        }
+        
+        .whatsapp-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        /* Selector de categorías - Responsive mejorado */
+        .category-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            .category-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .category-selector {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+        
+        .category-btn {
+            padding: 18px 10px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            min-height: 90px;
+            width: 100%;
+            word-break: break-word;
+        }
+        
+        .category-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .category-btn.active {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .category-btn.titular {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .category-btn.tercero {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .category-btn.sin-contacto {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .category-btn.ivr {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+        
+        .category-btn.digital {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+        }
+        
+        .category-btn i {
+            font-size: 1.6rem;
+            margin-bottom: 5px;
+        }
+        
+        .btn-subtitle {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            font-weight: normal;
+        }
+        
+        /* Panel de información */
+        .info-panel {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .info-panel.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .panel-header {
+            background: #f8f9fa;
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 6px solid;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        
+        @media (max-width: 480px) {
+            .panel-header {
+                padding: 15px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        
+        .panel-header.titular {
+            border-left-color: #3498db;
+            background: linear-gradient(to right, #f8f9fa, #ebf5fb);
+        }
+        
+        .panel-header.tercero {
+            border-left-color: #2ecc71;
+            background: linear-gradient(to right, #f8f9fa, #f0f9f2);
+        }
+        
+        .panel-header.sin-contacto {
+            border-left-color: #e74c3c;
+            background: linear-gradient(to right, #f8f9fa, #fdedec);
+        }
+        
+        .panel-header.ivr {
+            border-left-color: #9b59b6;
+            background: linear-gradient(to right, #f8f9fa, #f5eef9);
+        }
+        
+        .panel-header.digital {
+            border-left-color: #34495e;
+            background: linear-gradient(to right, #f8f9fa, #ecf0f1);
+        }
+        
+        .panel-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 480px) {
+            .panel-title {
+                font-size: 1.1rem;
+            }
+        }
+        
+        .subcategory-count {
+            background: rgba(0,0,0,0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        
+        /* Filtros para Gestión Digital - Responsive */
+        .digital-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        @media (max-width: 480px) {
+            .digital-filters {
+                padding: 12px;
+                gap: 8px;
+            }
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #e0e0e0;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        
+        @media (max-width: 480px) {
+            .filter-btn {
+                padding: 8px 15px;
+                font-size: 0.8rem;
+                flex: 1;
+                min-width: 0;
+                justify-content: center;
+            }
+            
+            .filter-btn i {
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .filter-btn {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+            }
+            
+            .filter-btn i {
+                font-size: 0.8rem;
+            }
+        }
+        
+        .filter-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .filter-btn.active {
+            color: white;
+        }
+        
+        .filter-btn.whatsapp.active {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+        }
+        
+        .filter-btn.email.active {
+            background: linear-gradient(135deg, #EA4335, #D14836);
+        }
+        
+        .filter-btn.sms.active {
+            background: linear-gradient(135deg, #8E44AD, #7D3C98);
+        }
+        
+        /* Contenedor de subcategorías - SIN height fijo */
+        .subcategories-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding-right: 5px;
+            /* Eliminado: max-height: 500px; overflow-y: auto; */
+        }
+        
+        @media (max-width: 480px) {
+            .subcategories-container {
+                gap: 14px;
+            }
+        }
+        
+        /* Subcategoría individual - Responsive */
+        .subcategory-item {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            border: 2px solid #eef2f7;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        @media (max-width: 480px) {
+            .subcategory-item {
+                padding: 15px;
+                border-radius: 10px;
+            }
+        }
+        
+        .subcategory-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        @media (hover: none) {
+            .subcategory-item:hover {
+                transform: none;
+            }
+            
+            .subcategory-item:active {
+                transform: scale(0.98);
+            }
+        }
+        
+        .subcategory-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+        
+        @media (max-width: 480px) {
+            .subcategory-header {
+                gap: 12px;
+                margin-bottom: 10px;
+            }
+        }
+        
+        .subcategory-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 480px) {
+            .subcategory-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+        }
+        
+        .subcategory-icon.titular {
+            background: #3498db;
+        }
+        
+        .subcategory-icon.tercero {
+            background: #2ecc71;
+        }
+        
+        .subcategory-icon.sin-contacto {
+            background: #e74c3c;
+        }
+        
+        .subcategory-icon.ivr {
+            background: #9b59b6;
+        }
+        
+        .subcategory-icon.digital {
+            background: #34495e;
+        }
+        
+        .subcategory-name-container {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .subcategory-name {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.05rem;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+        
+        @media (max-width: 480px) {
+            .subcategory-name {
+                font-size: 1rem;
+            }
+        }
+        
+        .channel-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+            margin-top: 5px;
+            display: inline-block;
+        }
+        
+        .badge-whatsapp {
+            background: #25D366;
+        }
+        
+        .badge-email {
+            background: #EA4335;
+        }
+        
+        .badge-sms {
+            background: #8E44AD;
+        }
+        
+        .subcategory-description {
+            color: #555;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            padding-left: 55px;
+        }
+        
+        @media (max-width: 480px) {
+            .subcategory-description {
+                padding-left: 48px;
+                font-size: 0.88rem;
+                line-height: 1.5;
+            }
+        }
+        
+        /* Notas especiales */
+        .process-note, .warning-note, .info-note {
+            padding: 10px 15px;
+            margin-top: 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        @media (max-width: 480px) {
+            .process-note, .warning-note, .info-note {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+                gap: 8px;
+            }
+        }
+        
+        .process-note {
+            background: #fff8e1;
+            border-left: 3px solid #ff9800;
+        }
+        
+        .warning-note {
+            background: #ffebee;
+            border-left: 3px solid #f44336;
+        }
+        
+        .info-note {
+            background: #e3f2fd;
+            border-left: 3px solid #2196f3;
+        }
+        
+        /* Footer - Responsive */
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.85rem;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 12px 8px;
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+        
+        .stat-item:hover {
+            transform: scale(1.03);
+        }
+        
+        .stat-number {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        @media (max-width: 480px) {
+            .stat-number {
+                font-size: 1.3rem;
+            }
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: #666;
+            line-height: 1.3;
+        }
+        
+        /* Instrucciones */
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #1976d2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 480px) {
+            .instructions {
+                padding: 12px;
+                font-size: 0.9rem;
+                text-align: left;
+            }
+            
+            .instructions i {
+                flex-shrink: 0;
+            }
+        }
+        
+        /* Estilos específicos para pantallas muy pequeñas */
+        @media (max-width: 320px) {
+            .container {
+                padding: 12px;
+            }
+            
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+            }
+            
+            .category-btn {
+                padding: 15px 8px;
+                font-size: 0.85rem;
+                min-height: 80px;
+            }
+            
+            .category-btn i {
+                font-size: 1.4rem;
+            }
+            
+            .btn-subtitle {
+                font-size: 0.65rem;
+            }
+        }
+        
+        /* Ajustes para orientación landscape en móviles */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .subcategories-container {
+                max-height: 300px;
+                overflow-y: auto;
+            }
+            
+            .category-selector {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header actualizado -->
+        <div class="header">
+            <div class="whatsapp-icon">
+                <i class="fab fa-whatsapp"></i>
+            </div>
+            <h1>MATRIZ DE TIPIFICACIONES</h1>
+            <p>Selecciona el tipo de contacto para ver las categorías</p>
+        </div>
+        
+        <!-- Instrucciones -->
+        <div class="instructions">
+            <i class="fas fa-hand-point-up"></i>
+            <span>Toca el botón para ver las categorías correspondientes</span>
+        </div>
+        
+        <!-- Selector de Categorías - Grid responsivo -->
+        <div class="category-selector">
+            <button class="category-btn titular active" onclick="showCategory('titular')">
+                <i class="fas fa-user"></i>
+                Contacto Titular
+                <span class="btn-subtitle">13 subcategorías</span>
+            </button>
+            
+            <button class="category-btn tercero" onclick="showCategory('tercero')">
+                <i class="fas fa-users"></i>
+                Contacto Tercero
+                <span class="btn-subtitle">8 subcategorías</span>
+            </button>
+            
+            <button class="category-btn sin-contacto" onclick="showCategory('sin-contacto')">
+                <i class="fas fa-phone-slash"></i>
+                Sin Contacto
+                <span class="btn-subtitle">7 subcategorías</span>
+            </button>
+            
+            <button class="category-btn ivr" onclick="showCategory('ivr')">
+                <i class="fas fa-headset"></i>
+                Gestión IVR
+                <span class="btn-subtitle">6 subcategorías</span>
+            </button>
+            
+            <button class="category-btn digital" onclick="showCategory('digital')">
+                <i class="fas fa-mobile-alt"></i>
+                Gestión Digital
+                <span class="btn-subtitle">33 subcategorías</span>
+            </button>
+        </div>
+        
+        <!-- Panel de Contacto Titular -->
+        <div id="panel-titular" class="info-panel active">
+            <div class="panel-header titular">
+                <div class="panel-title">
+                    <i class="fas fa-user"></i>
+                    Contacto con el Titular
+                    <span class="subcategory-count">13 subcategorías</span>
+                </div>
+                <div style="color: #3498db; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> Interacción directa
+                </div>
+            </div>
+            
+            <div class="subcategories-container">
+                <!-- Subcategorías Titular - TODAS VISIBLES -->
+                <div class="subcategory-item titular">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon titular">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Compromiso de Pago Total</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los que el titular proceda a pagar el total de deuda
+                    </div>
+                </div>
+                
+                <div class="subcategory-item titular">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon titular">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Volver a Llamar</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los que el titular por alguna razón no pueda continuar con el contacto o indique que desea ser contactado en otro momento
+                    </div>
+                </div>
+                
+                <div class="subcategory-item titular">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon titular">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Renuente al Pago</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica para los casos en los cuales el cliente no desee cancelar su deuda bajo ningún contexto o negociación
+                    </div>
+                </div>
+                
+                <div class="subcategory-item titular">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon titular">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">YA PAGO - CON COMPROBANTE</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica para los casos en los cuales el cliente informe haber pagado su deuda (total/cuota) y la aplicación no la reconozca
+                    </div>
+                </div>
+                
+                <div class="subcategory-item titular">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon titular">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Desconoce Deuda / Posible Fraude</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos donde el cliente informe desconocer la deuda por la cual es contactado y deba aperturarse la verificación de casos especiales
+                    </div>
+                </div>
+                
+                <div class="subcategory-item titular">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon titular">
+                            <i class="fas fa-phone-slash"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Titular Corta Llamada</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en donde el titular corte la llamada sin un previo aviso o negociación de cara a la gestión de un contacto efectivo
+                    </div>
+                </div>
+                
+                <div class="subcategory-item titular">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon titular">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Recordatorio de Pago Vigente</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales ya poseas un compromiso de pago vigente con el cliente y se aplique una llamada para recordar el pago correspondiente
+                    </div>
+                </div>
+                
+                <div class="subcategory-item titular">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon titular">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">YA PAGO - SIN COMPROBANTE</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica para los casos en los cuales el cliente informe haber pagado su deuda (total/cuota) y no subió el comprobante en la app, y ahora la misma no reconoce el comprobante
+                    </div>
+                </div>
+                
+                <div class="subcategory-item titular">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon titular">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Seguimiento-Interesado Negociar</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los que el titular por alguna razón no pueda ser promesado (fecha muy lejana, no otorga seguridad de pago)
+                    </div>
+                </div>
+                
+                <div class="subcategory-item titular">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon titular">
+                            <i class="fas fa-money-check-alt"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Compromiso de Pago Parcial</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los que el titular proceda a una cuota o abonar a alguna
+                    </div>
+                </div>
+                
+                <div class="subcategory-item titular">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon titular">
+                            <i class="fas fa-user-injured"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">TT Sin Trabajo/Enfermedad/Falta Liquidez</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica para los casos en los cuales el cliente no puede cancelar su deuda por no poseer trabajo, falta de ingresos o enfermedad, sin embargo muestra disposición a la negociación
+                    </div>
+                </div>
+                
+                <div class="subcategory-item titular">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon titular">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Desacuerdo con Monto Adeudado</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales el cliente no desee cancelar en vista que está en desacuerdo con el monto a cancelar
+                    </div>
+                </div>
+                
+                <div class="subcategory-item titular">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon titular">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Problemas con el Servicio/Producto</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales el cliente no desee cancelar en vista que tuvo problemas con el servicio de CASHEA o con el producto
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel de Contacto Tercero -->
+        <div id="panel-tercero" class="info-panel">
+            <div class="panel-header tercero">
+                <div class="panel-title">
+                    <i class="fas fa-users"></i>
+                    Contacto con Tercero
+                    <span class="subcategory-count">8 subcategorías</span>
+                </div>
+                <div style="color: #2ecc71; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> Interacción indirecta
+                </div>
+            </div>
+            
+            <div class="subcategories-container">
+                <!-- Subcategorías Tercero - TODAS VISIBLES -->
+                <div class="subcategory-item tercero">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon tercero">
+                            <i class="fas fa-child"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Menor de Edad</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica para los casos en los cuales el tercero es un menor de edad y no se encuentra un adulto para continuar la gestión
+                    </div>
+                </div>
+                
+                <div class="subcategory-item tercero">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon tercero">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Mensaje Dejado para Titular</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los cuales el titular no se encuentre disponible para un contacto inmediato y se proceda a dejar un mensaje a tercero
+                    </div>
+                </div>
+                
+                <div class="subcategory-item tercero">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon tercero">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Titular Reside Fuera del País</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos los cuales el tercero informe que el titular se encuentra fuera del país y el contacto no pueda generarse
+                        <div class="process-note">
+                            <i class="fab fa-whatsapp" style="color:#25D366;"></i>
+                            Aplica también cuando otorgue un número de WhatsApp para poder contactarse en un futuro
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="subcategory-item tercero">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon tercero">
+                            <i class="fas fa-cross"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">TT Fallecido</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos los cuales el tercero informe que el titular ha fallecido y no se hará responsable de la deuda
+                        <div class="process-note">
+                            <i class="fas fa-cogs"></i>
+                            Para ese caso se procede a realizar el proceso de actu
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="subcategory-item tercero">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon tercero">
+                            <i class="fas fa-address-card"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Información de Contacto Actualizada</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales el número no corresponda a la persona como titular actual
+                        <div class="process-note">
+                            <i class="fas fa-sync-alt"></i>
+                            En este caso, se activa el proceso de actualización de datos
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="subcategory-item tercero">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon tercero">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Recordatorio Promesa de Pago</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales ya poseas un compromiso de pago vigente con el cliente y se aplique una llamada para recordar el pago correspondiente
+                    </div>
+                </div>
+                
+                <div class="subcategory-item tercero">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon tercero">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Compromiso de Pago del Tercero</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los que el tercero proceda a pagar el total de deuda
+                    </div>
+                </div>
+                
+                <div class="subcategory-item tercero">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon tercero">
+                            <i class="fas fa-money-check-alt"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Compromiso de Pago Parcial del Tercero</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los que el tercero proceda a una cuota o abonar a alguna
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel de Sin Contacto -->
+        <div id="panel-sin-contacto" class="info-panel">
+            <div class="panel-header sin-contacto">
+                <div class="panel-title">
+                    <i class="fas fa-phone-slash"></i>
+                    Sin Contacto
+                    <span class="subcategory-count">7 subcategorías</span>
+                </div>
+                <div style="color: #e74c3c; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> Llamada sin interacción
+                </div>
+            </div>
+            
+            <div class="subcategories-container">
+                <!-- Subcategorías Sin Contacto - TODAS VISIBLES -->
+                <div class="subcategory-item sin-contacto">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon sin-contacto">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Corta Llamado</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se tenga contacto con un cliente pero el mismo corte el llamado, esto sin poder verificar si es titular o tercero
+                    </div>
+                </div>
+                
+                <div class="subcategory-item sin-contacto">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon sin-contacto">
+                            <i class="fas fa-phone-volume"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Teléfono Ocupado</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se genere/reciba una llamada y arroje un tono ocupado
+                    </div>
+                </div>
+                
+                <div class="subcategory-item sin-contacto">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon sin-contacto">
+                            <i class="fas fa-voicemail"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Buzón de Voz</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se genere/reciba una llamada y arroje un buzón de voz
+                    </div>
+                </div>
+                
+                <div class="subcategory-item sin-contacto">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon sin-contacto">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">No Contesta</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se genere/reciba una llamada y el cliente no conteste, puede ser que la llamada repique sin caer en contestadora o la llamada esté muda
+                    </div>
+                </div>
+                
+                <div class="subcategory-item sin-contacto">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon sin-contacto">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Fuera de Servicio</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se genere/reciba una llamada y arroje un mensaje de fuera de servicio, tono pirullar
+                    </div>
+                </div>
+                
+                <div class="subcategory-item sin-contacto">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon sin-contacto">
+                            <i class="fas fa-user-times"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">No Existe</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se genere/reciba una llamada y arroje un mensaje que indique que el número no está asociado a ningún suscriptor
+                    </div>
+                </div>
+                
+                <div class="subcategory-item sin-contacto">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon sin-contacto">
+                            <i class="fas fa-user-slash"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Equivocado - No Corresponde</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se genere/reciba una llamada y la persona indique que el número está equivocado
+                        <div class="warning-note">
+                            <i class="fas fa-exclamation-circle"></i>
+                            No puede aplicarse el proceso de actualización de datos ya que no pudo realizarse el sondeo
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel de Gestión IVR -->
+        <div id="panel-ivr" class="info-panel">
+            <div class="panel-header ivr">
+                <div class="panel-title">
+                    <i class="fas fa-headset"></i>
+                    Gestión IVR
+                    <span class="subcategory-count">6 subcategorías</span>
+                </div>
+                <div style="color: #9b59b6; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> Sistema de voz interactivo
+                </div>
+            </div>
+            
+            <div class="subcategories-container">
+                <!-- Subcategorías IVR - TODAS VISIBLES -->
+                <div class="subcategory-item ivr">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon ivr">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">IVR-Corta Llamado</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica cuando el cliente mediante el IVR cuelgue la llamada
+                    </div>
+                </div>
+                
+                <div class="subcategory-item ivr">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon ivr">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Compromisos de Pago total por IVR</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica cuando el cliente mediante el IVR genere un compromiso de pago total
+                    </div>
+                </div>
+                
+                <div class="subcategory-item ivr">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon ivr">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">IVR- Información medios de pago</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica cuando el cliente mediante el IVR se informe sobre los medios de pago
+                    </div>
+                </div>
+                
+                <div class="subcategory-item ivr">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon ivr">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">IVR- Ya Pagó</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica cuando el cliente mediante el IVR informe que ya pagó
+                    </div>
+                </div>
+                
+                <div class="subcategory-item ivr">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon ivr">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">IVR- Recordatorio Pago</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica cuando el cliente mediante el IVR se genere un recordatorio al cliente
+                        <div class="info-note">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Un ejecutivo NO puede tipificar esta subcategoría
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="subcategory-item ivr">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon ivr">
+                            <i class="fas fa-money-check-alt"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Compromisos de Pago parcial por IVR</div>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica cuando el cliente mediante el IVR genere un compromiso de pago parcial u abono a una cuota
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel de Gestión Digital -->
+        <div id="panel-digital" class="info-panel">
+            <div class="panel-header digital">
+                <div class="panel-title">
+                    <i class="fas fa-mobile-alt"></i>
+                    Gestión Digital
+                    <span class="subcategory-count">33 subcategorías</span>
+                </div>
+                <div style="color: #34495e; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> WhatsApp, Email y SMS
+                </div>
+            </div>
+            
+            <!-- Filtros por canal -->
+            <div class="digital-filters">
+                <button class="filter-btn whatsapp active" onclick="filterDigital('whatsapp')">
+                    <i class="fab fa-whatsapp"></i> WhatsApp (19)
+                </button>
+                <button class="filter-btn email" onclick="filterDigital('email')">
+                    <i class="fas fa-envelope"></i> Email (13)
+                </button>
+                <button class="filter-btn sms" onclick="filterDigital('sms')">
+                    <i class="fas fa-sms"></i> SMS (5)
+                </button>
+            </div>
+            
+            <div class="subcategories-container" id="digital-container">
+                <!-- Subcategorías WhatsApp -->
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- Compromiso de Pago Total</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos donde se proceda a realizar un compromiso de pago total
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-money-check-alt"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- Compromiso de Pago Parcial</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos donde se proceda a realizar un compromiso de pago parcial o abono a una cuota
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- Información medios de pago</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos donde se proceda a informar sobre los medios de pago vigentes
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- YA PAGO - CON COMPROBANTE</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica para los casos en los cuales el cliente informe haber pagado su deuda (total/cuota) y la aplicación no la reconozca
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- Recordatorio Pago</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales ya poseas un compromiso de pago vigente con el cliente y se aplique una llamada para recordar el pago correspondiente
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- YA PAGO - SIN COMPROBANTE</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica para los casos en los cuales el cliente informe haber pagado su deuda (total/cuota) y no subió el comprobante en la app, y ahora la misma no reconoce el comprobante
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-cross"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- TT Fallecido</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos los cuales el tercero informe que el titular ha fallecido y no se hará responsable de la deuda
+                        <div class="process-note">
+                            <i class="fas fa-cogs"></i>
+                            Para ese caso se procede a realizar el proceso de actu
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- Titular Reside Fuera del País</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos los cuales el tercero informe que el titular se encuentra fuera del país y el contacto no pueda generarse
+                        <div class="process-note">
+                            <i class="fab fa-whatsapp"></i>
+                            Aplica también cuando otorgue un número de WhatsApp para poder contactarse en un futuro
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- Mensaje Dejado para Titular</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los cuales el titular no se encuentre disponible para un contacto inmediato y se proceda a dejar un mensaje a tercero
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-user-slash"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- Equivocado - No Corresponde</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se genere/reciba una llamada y la persona indique que el número está equivocado
+                        <div class="warning-note">
+                            <i class="fas fa-exclamation-circle"></i>
+                            No puede aplicarse el proceso de actualización de datos ya que no pudo realizarse el sondeo
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- Desconoce Deuda/Posible Fraude</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos donde el cliente informe desconocer la deuda por la cual es contactado y deba aperturarse la verificación de casos especiales
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- TT no quiere pagar</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica para los casos en los cuales el cliente no desee cancelar su deuda bajo ningún contexto o negociación
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- Problemas con el Servicio/Producto</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales el cliente no desee cancelar en vista que tuvo problemas con el servicio de CASHEA o con el producto
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-comment-slash"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- Sin interacción del cliente</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se reciba un mensaje y cliente no responda más a la conversación posterior a 3 mensajes
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-user-times"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- Cliente no asignado</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se reciba un mensaje y cliente no se encuentre asignado en la base de datos
+                        <div class="process-note">
+                            <i class="fas fa-level-up-alt"></i>
+                            Se inicia el proceso de escalado
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- Enviado</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se envíe un WhatsApp
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-inbox"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- Recibido</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se reciba un mensaje y cliente no responda al mensaje inicial
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital whatsapp">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">WhatsApp- Promoción especial Exoneración fee</div>
+                            <span class="channel-badge badge-whatsapp">WhatsApp</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos que envíe un mensaje de promoción por exoneración
+                    </div>
+                </div>
+                
+                <!-- Subcategorías Email -->
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- Compromiso de Pago Total</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos donde se proceda a realizar un compromiso de pago total
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-money-check-alt"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- Compromiso de Pago Parcial</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos donde se proceda a realizar un compromiso de pago parcial o abono a una cuota
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- Información medios de pago</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos donde se proceda a informar sobre los medios de pago vigentes
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- YA PAGO - CON COMPROBANTE</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica para los casos en los cuales el cliente informe haber pagado su deuda (total/cuota) y la aplicación no la reconozca
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- Recordatorio Pago</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales ya poseas un compromiso de pago vigente con el cliente y se aplique una llamada para recordar el pago correspondiente
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- YA PAGO - SIN COMPROBANTE</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica para los casos en los cuales el cliente informe haber pagado su deuda (total/cuota) y no subió el comprobante en la app, y ahora la misma no reconoce el comprobante
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- Problemas con el Servicio/Producto</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales el cliente no desee cancelar en vista que tuvo problemas con el servicio de CASHEA o con el producto
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-cross"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- TT Fallecido</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos los cuales el tercero informe que el titular ha fallecido y no se hará responsable de la deuda
+                        <div class="process-note">
+                            <i class="fas fa-cogs"></i>
+                            Para ese caso se procede a realizar el proceso de actu
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- Titular Reside Fuera del País</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos los cuales el tercero informe que el titular se encuentra fuera del país y el contacto no pueda generarse
+                        <div class="process-note">
+                            <i class="fab fa-whatsapp"></i>
+                            Aplica también cuando otorgue un número de WhatsApp para poder contactarse en un futuro
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- Desconoce Deuda/Posible Fraude</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos donde el cliente informe desconocer la deuda por la cual es contactado y deba aperturarse la verificación de casos especiales
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- Enviado</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica para cuando se mande un correo inicial de cobranza
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-comment-slash"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email - No responde</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se reciba un mensaje y cliente no se encuentre asignado en la base de datos
+                        <div class="process-note">
+                            <i class="fas fa-level-up-alt"></i>
+                            Se inicia el proceso de escalado
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- Leído</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales el titular reciba un correo y tengamos la notificación que lo leyó más no respondió
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-user-times"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- Cliente no asignado</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se reciba un mensaje y cliente no se encuentre asignado en la base de datos
+                        <div class="process-note">
+                            <i class="fas fa-level-up-alt"></i>
+                            Se inicia el proceso de escalado
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- Promoción especial Exoneración fee</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos que envíe un mensaje de promoción por exoneración
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital email">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">Email- No corresponde</div>
+                            <span class="channel-badge badge-email">Email</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales se reciba un mensaje y no corresponda a cobranza
+                    </div>
+                </div>
+                
+                <!-- Subcategorías SMS -->
+                <div class="subcategory-item digital sms">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">SMS- Solicita contacto</div>
+                            <span class="channel-badge badge-sms">SMS</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica al recibir un SMS y el cliente solicite ser contactado
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital sms">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-check-double"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">SMS- Entregado</div>
+                            <span class="channel-badge badge-sms">SMS</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica al enviar un SMS y tengamos notificación de recepción
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital sms">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">SMS- Recordatorio Pago</div>
+                            <span class="channel-badge badge-sms">SMS</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos en los cuales ya poseas un compromiso de pago vigente con el cliente y se aplique una llamada para recordar el pago correspondiente
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital sms">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">SMS- Información medios de pago</div>
+                            <span class="channel-badge badge-sms">SMS</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos donde se proceda a informar sobre los medios de pago vigentes
+                    </div>
+                </div>
+                
+                <div class="subcategory-item digital sms">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon digital">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="subcategory-name-container">
+                            <div class="subcategory-name">SMS- Promoción especial Exoneración fee</div>
+                            <span class="channel-badge badge-sms">SMS</span>
+                        </div>
+                    </div>
+                    <div class="subcategory-description">
+                        Aplica en los casos que envíe un mensaje de promoción por exoneración
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer con estadísticas -->
+        <div class="footer">
+            <div class="stats">
+                <div class="stat-item" style="background: #ebf5fb;">
+                    <div class="stat-number" style="color: #3498db;">13</div>
+                    <div class="stat-label">Contacto Titular</div>
+                </div>
+                <div class="stat-item" style="background: #f0f9f2;">
+                    <div class="stat-number" style="color: #2ecc71;">8</div>
+                    <div class="stat-label">Contacto Tercero</div>
+                </div>
+                <div class="stat-item" style="background: #fdedec;">
+                    <div class="stat-number" style="color: #e74c3c;">7</div>
+                    <div class="stat-label">Sin Contacto</div>
+                </div>
+                <div class="stat-item" style="background: #f5eef9;">
+                    <div class="stat-number" style="color: #9b59b6;">6</div>
+                    <div class="stat-label">Gestión IVR</div>
+                </div>
+                <div class="stat-item" style="background: #ecf0f1;">
+                    <div class="stat-number" style="color: #34495e;">33</div>
+                    <div class="stat-label">Gestión Digital</div>
+                </div>
+                <div class="stat-item" style="background: #e3f2fd;">
+                    <div class="stat-number" style="color: #1976d2; font-size: 1.5rem;">67</div>
+                    <div class="stat-label" style="font-weight: bold;">TOTAL</div>
+                </div>
+            </div>
+            
+            <p><strong>Matriz de Tipificaciones CASHEA</strong> | Total: 67 subcategorías</p>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">
+                <i class="fas fa-mobile-alt"></i> Inversiones DRC todos los derechos reservados 2025
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function showCategory(category) {
+            // Ocultar todos los paneles
+            const panels = ['titular', 'tercero', 'sin-contacto', 'ivr', 'digital'];
+            panels.forEach(panel => {
+                document.getElementById(`panel-${panel}`).classList.remove('active');
+            });
+            
+            // Remover clase active de todos los botones
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Mostrar el panel seleccionado
+            document.getElementById(`panel-${category}`).classList.add('active');
+            
+            // Activar el botón correspondiente
+            document.querySelector(`.category-btn.${category}`).classList.add('active');
+            
+            // Animación de cambio
+            const panel = document.getElementById(`panel-${category}`);
+            panel.style.animation = 'none';
+            setTimeout(() => {
+                panel.style.animation = 'fadeIn 0.5s ease';
+            }, 10);
+            
+            // Scroll suave hacia el panel
+            panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Feedback táctil (para móviles)
+            if ('vibrate' in navigator) {
+                navigator.vibrate(50);
+            }
+            
+            // Si es Gestión Digital, inicializar filtros
+            if (category === 'digital') {
+                setTimeout(() => filterDigital('whatsapp'), 100);
+            }
+        }
+        
+        function filterDigital(channel) {
+            // Cambiar filtros activos
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.filter-btn.${channel}`).classList.add('active');
+            
+            // Mostrar/ocultar elementos según canal
+            const allItems = document.querySelectorAll('#digital-container .subcategory-item');
+            allItems.forEach(item => {
+                item.style.display = 'none';
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-10px)';
+            });
+            
+            // Mostrar elementos del canal seleccionado
+            const channelItems = document.querySelectorAll(`#digital-container .subcategory-item.${channel}`);
+            channelItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.display = 'block';
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateX(0)';
+                    }, 50);
+                }, index * 30);
+            });
+        }
+        
+        // Inicializar con Contacto Titular activo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Añadir efecto de clic a las subcategorías
+            document.querySelectorAll('.subcategory-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+            
+            // Inicializar filtros si Gestión Digital está activa
+            if (document.getElementById('panel-digital').classList.contains('active')) {
+                filterDigital('whatsapp');
+            }
+            
+            console.log('Matriz de Tipificaciones cargada correctamente');
+        });
+    </script>
+</body>
+</html>
